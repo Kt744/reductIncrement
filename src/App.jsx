@@ -1,18 +1,32 @@
-import { createContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Header from './components/Header'
-import Products from './components/Products'
 import axios from 'axios'
 import { useDispatch } from 'react-redux'
 import { setProducts } from './redux/incrementSlice'
-// import './App.css'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import Products from './components/Products'
+import Cart from './components/Cart'
 
-export const myContext=createContext([])
+const router=createBrowserRouter([
+  {
+    path:"/",
+    element: <Header />,
+    children:[
+      {
+        path:"/products",
+        element:<Products/>
+      },
+      {
+        path:"/cart",
+        element:<Cart/>
+      },
+    ]
+  }
+]);
 
 function App() {
 
   const dispatch=useDispatch();
-
-  const [items,setItems]=useState([])
 
   useEffect(()=>{
     axios.get('https://dummyjson.com/products')
@@ -27,10 +41,9 @@ function App() {
 
   return (
     <div>
-    <myContext.Provider value={items}>
-      <Header />
-    </myContext.Provider>
-    <Products item={items} setItem={setItems} />
+      <RouterProvider router={router}>
+        <Header />
+      </RouterProvider>,
     </div>
   )
 }
